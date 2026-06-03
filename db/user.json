@@ -1,0 +1,67 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "firstName": "Emily",
+      "lastName": "Johnson",
+      "maidenName": "Smith",
+      "email": "emily.johnson@x.dummyjson.com",
+      "username": "emilys",
+      "password": "emilyspass"
+    },
+    {
+      "id": 2,
+      "firstName": "Michael",
+      "lastName": "Williams",
+      "maidenName": "",
+      "email": "michael.williams@x.dummyjson.com",
+      "username": "michaelw",
+      "password": "michaelwpass"
+    },
+    {
+      "id": 3,
+      "firstName": "Sophia",
+      "lastName": "Brown",
+      "maidenName": "",
+      "email": "sophia.brown@x.dummyjson.com",
+      "username": "sophiab",
+      "password": "sophiabpass"
+    },
+    {
+      "id": 5,
+      "firstName": "a",
+      "lastName": "a",
+      "maidenName": "a",
+      "email": "a",
+      "username": "a",
+      "password": "a"
+    },
+    {
+      "id": 6,
+      "firstName": "asd",
+      "lastName": "asdasd",
+      "maidenName": "asd",
+      "email": "asd",
+      "username": "asd",
+      "password": "asd"
+    },
+    {
+      "id": 7,
+      "firstName": "test",
+      "lastName": "test",
+      "maidenName": "",
+      "email": "test",
+      "username": "test",
+      "password": "test"
+    },
+    {
+      "id": 8,
+      "firstName": "sample",
+      "lastName": "sample",
+      "maidenName": "sample",
+      "email": "sample",
+      "username": "sample",
+      "password": "$2b$10$LFNsKPzSs0Tgs8Z534YQduJl8rxal0BqJoV2ov6htkyAo.MJNxMcm"
+    }
+  ]
+}
