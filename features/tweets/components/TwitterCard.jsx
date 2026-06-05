@@ -2,7 +2,7 @@
 
 
 import { border, card, layout, typography } from '@/shared/styles/globalN';
-import { Ellipsis, MessageCircle, PencilIcon, X } from 'lucide-react';
+import { ArrowBigLeft, ArrowLeft, Ellipsis, MessageCircle, PencilIcon, Trash2, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react'
 import DownVote from './DownVote';
@@ -17,16 +17,18 @@ import TweetComments from '../../comments/components/TweetComments';
 import { deleteTweet } from '../services/tweet.api.client.service';
 import showAlert from '@/lib/alert';
 import { timeAgo } from '@/lib/utils';
+import ViewerList from '@/features/views/component/ViewerList';
 
 
 const TwitterCard = ({ tweet, isSingleView = false }) => {
   const router = useRouter();
 
-  const { upVoteTweet, downVoteTweet, unVoteUpDownTweet, setIsUpdateTweetModalOpen, isUpdateTweetModalOpen, setTweetForUpdate } = useTweet();
+  const { upVoteTweet, downVoteTweet, unVoteUpDownTweet, setIsUpdateTweetModalOpen, isUpdateTweetModalOpen, setTweetForUpdate, isTweetsViewersModalOpen, setIsTweetViewersModalOpen, setTweetIdForViewers} = useTweet();
   const {data: session} = useSession();
  
   const [openModal, setModal] = useState(false);
-  const [openCommentModal, setCommentModal] = useState(false);
+  const [isCardActionOpen, setIsCardActionOpen] = useState(false);
+
 
   // check session if available
   if (!session) {
@@ -37,7 +39,7 @@ const TwitterCard = ({ tweet, isSingleView = false }) => {
   const handleModal = () => {
     setModal(!openModal)
   }
-  
+
   // handles the deletion of tweet
   const handleDelete = async (id) => {
     const confirmDelete = window.confirm("Are you sure you want to delete this tweet?");
@@ -64,7 +66,13 @@ const TwitterCard = ({ tweet, isSingleView = false }) => {
       showAlert('danger',error.message);
     }finally {
       console.log("Done executing handleDelete function");
-      router.refresh();
+      
+      if (isSingleView) {
+        router.replace("/");
+      }else{
+         router.refresh();
+      }
+     
     }
 
   }
@@ -144,12 +152,20 @@ const TwitterCard = ({ tweet, isSingleView = false }) => {
   const reactionIdDown = isVotedDown ? tweet.reactions.find(reaction => reaction.reaction_by === userId && reaction.type === "downvote")?._id : null;
   
   const commentLen = tweet?.comments?.length || 0;
-  const perTweet = tweet;
   
 
   return (
     <>
+      
       <article className={`${card.base} ${card.padding} ${card.interactive} ${border.strong} relative mx-auto w-95 sm:w-md ${isSingleView && 'mt-8' } `}>
+        {/* if isSingleView, show this menu */}
+        {isSingleView && 
+          <section className={`flex gap-3 justify-between mb-4`}>
+            <ArrowLeft className="w-5 h-5 text-gray-500 cursor-pointer" onClick={()=>window.history.back()}/>
+            {userId === tweet.author._id && (<Ellipsis className="w-5 h-5 text-gray-500 cursor-pointer" onMouseEnter={()=>setIsCardActionOpen(true)}/>)}
+          </section>
+        }
+        
         <section className={`flex gap-3`}>
           <Avatar avatarSrc={'/profile.png'} avatarAlt={'Profile Picture'} avatarWidth={50} avatarHeight={50} />
 
@@ -161,12 +177,13 @@ const TwitterCard = ({ tweet, isSingleView = false }) => {
               @{tweet.author.username}
             </span>
 
-            <span className="text-gray-500 text-sm mx-2">
+            <span className="mx-2 inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-gray-100 text-gray-700">
               {/* · {new Date(tweet.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} · {new Date(tweet.createdAt).toLocaleDateString()} */}
               {timeAgo(tweet.createdAt)}
             </span>
           </section>
-          <Ellipsis className="w-5 h-5 text-gray-500" />
+
+          {(!isSingleView && userId === tweet.author._id) && (<Ellipsis className="w-5 h-5 text-gray-500 cursor-pointer" onMouseEnter={()=>setIsCardActionOpen(true)}/>)}
         </section>
 
         <section className={`mt-5 ${typography.body}`}>
@@ -201,7 +218,11 @@ const TwitterCard = ({ tweet, isSingleView = false }) => {
             votes={tweet.downvotes} 
             fill={isVotedDown} 
           />
-          <TweetView views={tweet.views} />
+          <TweetView views={tweet.views} onClick={() => {
+            setIsTweetViewersModalOpen(true);
+            setTweetIdForViewers(tweet._id);
+            
+          }} />
         </section>
 
         {/* for comments */}
@@ -210,18 +231,18 @@ const TwitterCard = ({ tweet, isSingleView = false }) => {
         )}
         
           
-        {userId === tweet.author._id && (
-          <section className={`absolute top-2 right-2 flex ${card.base} ${card.padding} ${layout.stack} text-xs z-10`}>
-            <section className={` ${layout.inline} cursor-pointer`} onClick={() => handleDelete(tweet._id)}>
-              <X className="w-5 h-5 text-gray-500" /> 
+        {(userId === tweet.author._id && isCardActionOpen) && (
+          <section className={`absolute top-2 right-2 flex ${card.base} ${layout.stack} p-4 text-xs z-10`} onMouseLeave={()=>setIsCardActionOpen(false)}>
+            <section className={`flex items-center gap-1 cursor-pointer text-xs`} onClick={() => handleDelete(tweet._id)}>
+              <Trash2 className="w-4 h-4 text-gray-500 text-xs hover:fill-black" /> 
                 Delete Post
             </section>
             {tweet.availableEdits !== 0 && (
-              <section className={` ${layout.inline} cursor-pointer`} onClick={()=>{
+              <section className={`flex items-center gap-1 cursor-pointer text-xs`} onClick={()=>{
                   setIsUpdateTweetModalOpen(!isUpdateTweetModalOpen);
                   setTweetForUpdate(tweet);
                   }}>
-                <PencilIcon className=" w-5 h-5 text-gray-500"  /> 
+                <PencilIcon className=" w-3 h-3 text-gray-500 hover:fill-black"  /> 
                   Edit Post
               </section>
             )}
@@ -230,6 +251,7 @@ const TwitterCard = ({ tweet, isSingleView = false }) => {
         
       </article>
       {isUpdateTweetModalOpen && <TweetUpdateModal/>}
+      {isTweetsViewersModalOpen && <ViewerList/>}
     </>
   )
 }

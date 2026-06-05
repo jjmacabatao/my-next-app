@@ -6,7 +6,7 @@ import { border, button, card, input } from '@/shared/styles/globalN'
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { createTweet } from '../services/tweet.api.client.service';
 import showAlert from '@/lib/alert';
 
@@ -18,7 +18,15 @@ const TweetForm = () => {
     const [loading, setLoading] = useState(false);
     // const [error, setError] = useState("");
 
-    const {data: session} = useSession();
+    const {data: session, status} = useSession();
+
+    useEffect(()=>{
+        if (!session) {
+            console.log("Unauthorized! Session is null.")
+            router.push("/auth");
+            return;
+        }
+    },[session, router]);
     
     // handle tweet input change action
     const handleInputChange = (e) => {
@@ -66,7 +74,6 @@ const TweetForm = () => {
             setLoading(false);
         }
     }
-
   return (
     <>
         <section className={`${card.base} ${card.padding} ${border.strong} mb-6 mx-auto w-95 sm:w-md`}>
@@ -76,7 +83,7 @@ const TweetForm = () => {
                     <textarea 
                         rows="4" value={tweet} 
                         className={`${input.base} mt-1 focus:ring-0 w-full`} 
-                        placeholder="What's happening?" onChange={handleInputChange}>
+                        placeholder={`${status === 'authenticated' && '@'+session.user?.name?.username+','} What's happening?`} onChange={handleInputChange}>
                     </textarea>
                 </section>
                 <section className='flex items-center justify-between'>
@@ -86,7 +93,6 @@ const TweetForm = () => {
                     <button type="submit" className={`${button.base} ${button.variants.solid} ${button.sizes.md}`} disabled={loading || tweetLength === 0}>
                         {loading ? 'Tweeting' : 'Tweet'}</button>
                 </section>
-                
             </form>
         </section>
     </>

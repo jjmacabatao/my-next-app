@@ -2,6 +2,7 @@
 import { auth } from '@/auth';
 import TwitterCard from '@/features/tweets/components/TwitterCard';
 import { updateTweetViews } from '@/features/tweets/services/tweet.api.server.service';
+import { notFound } from 'next/navigation';
 
 import React from 'react'
 
@@ -11,29 +12,24 @@ export const dynamic = "force-dynamic";
 
 const SingleTwitterPage = async ( {params} ) => {
   const session = await auth();
-      
+
   if (!session) {
       redirect("/auth");
   }
 
   const { slug } = await params;
 
-  //update tweet view and return updated tweet
-  //Todo: for update:
-  //  update view only if user does not already in the viewers.
-
+  // update tweet view and return updated tweet
+  // update view only if user does not already in the viewers.
   const tweetViews = await updateTweetViews(slug, session.user?.name?.id);
 
   if (!tweetViews.success){
-    console.error(tweetViews.error);
-    return (<p>{tweetViews.error}</p>);
+    console.log(tweetViews.error);
+    notFound();
   }
 
   return (
-    
-      <TwitterCard tweet={tweetViews.tweet[0]} key={tweetViews._id} isSingleView={true}/>
-    
-    
+      <TwitterCard tweet={tweetViews.tweet[0]} key={tweetViews.tweet[0]._id} isSingleView={true}/>
   )
 }
 

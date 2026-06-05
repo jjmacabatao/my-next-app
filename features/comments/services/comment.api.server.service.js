@@ -1,15 +1,17 @@
 "use server";
 
-import { UPDATE_TWEETCOMMENTS, UPDATE_TWEETREACTIONS } from "@/lib/utils";
+import {
+  API_BASE_URL,
+  UPDATE_TWEETCOMMENTS,
+  UPDATE_TWEETREACTIONS,
+} from "@/lib/utils";
 import { cookies } from "next/headers";
-
-const TwEET_API_BASE_URL = "http://localhost:3000/api/tweets";
 
 export const createComment = async (tweetId, userId, comment) => {
   try {
     const cookieStore = await cookies();
 
-    const response = await fetch("http://localhost:3000/api/tweets/comment", {
+    const response = await fetch(`${API_BASE_URL}/comment`, {
       method: "POST",
       headers: {
         Cookie: cookieStore.toString(),
@@ -31,7 +33,7 @@ export const createComment = async (tweetId, userId, comment) => {
 
     // call tweet api patch for reaction
     const patchReactionResponse = await fetch(
-      `${TwEET_API_BASE_URL}/${UPDATE_TWEETCOMMENTS}`,
+      `${API_BASE_URL}/${UPDATE_TWEETCOMMENTS}`,
       {
         method: "PATCH",
         headers: {

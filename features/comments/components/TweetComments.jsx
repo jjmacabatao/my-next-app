@@ -2,7 +2,7 @@
 import { button, card, input, layout, text } from '@/shared/styles/globalN'
 import React, { useState } from 'react'
 import CommentCard from './CommentCard'
-import { createComment } from '@/features/comments/services/comment.api.client.service';
+import { createComment } from '@/features/comments/services/comment.api.server.service';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import showAlert from '@/lib/alert';

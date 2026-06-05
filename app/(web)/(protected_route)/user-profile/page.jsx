@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import ViewerList from "@/features/views/component/ViewerList";
-import { border, card, layout, surface, radius } from "@/shared/styles/globalN";
+import { card, layout, surface, radius } from "@/shared/styles/globalN";
 import { redirect } from "next/navigation";
 
 const Profile = async () => {
@@ -21,7 +21,6 @@ const Profile = async () => {
           </div>
         </section>
       </section>
-      <ViewerList/>
     </>
   );
 };

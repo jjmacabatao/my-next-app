@@ -10,6 +10,8 @@ export const TweetProvider = ({ children }) => {
 
     const [isUpdateTweetModalOpen, setIsUpdateTweetModalOpen] = useState(false); //state for the update post modal
     const [tweetForUpdate, setTweetForUpdate] = useState(); // state of the post to update
+    const [isTweetsViewersModalOpen, setIsTweetViewersModalOpen] = useState(false); // state for the viewers modal
+    const [tweetIdForViewers, setTweetIdForViewers] = useState(null); // state for the tweet id to get viewers for
 
     // handles the tweet up voting
     const upVoteTweet = async (tweetId, userId) => {
@@ -76,7 +78,10 @@ export const TweetProvider = ({ children }) => {
         setIsUpdateTweetModalOpen,
         setTweetForUpdate,
         tweetForUpdate,
-        
+        isTweetsViewersModalOpen,
+        setIsTweetViewersModalOpen,
+        tweetIdForViewers,
+        setTweetIdForViewers
     };
 
     return (

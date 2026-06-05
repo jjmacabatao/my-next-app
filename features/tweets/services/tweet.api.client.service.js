@@ -1,13 +1,10 @@
-import { UPDATE_TWEETREACTIONS } from "@/lib/utils";
-
-const TwEET_API_BASE_URL = "http://localhost:3000/api/tweets";
+import { API_BASE_URL, UPDATE_TWEETREACTIONS } from "@/lib/utils";
 
 export const createTweet = async (tweet, userId) => {
   try {
-    const response = await fetch(TwEET_API_BASE_URL, {
+    const response = await fetch(API_BASE_URL, {
       method: "POST",
       headers: {
-        // Cookie: cookiesStore.toString(),
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ tweet: tweet, userId: userId }),
@@ -22,7 +19,7 @@ export const createTweet = async (tweet, userId) => {
 };
 
 export const deleteTweet = async (id) => {
-  const response = await fetch(TwEET_API_BASE_URL, {
+  const response = await fetch(API_BASE_URL, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
@@ -42,7 +39,7 @@ export const deleteTweet = async (id) => {
 //handles the api call for voting tweet
 //if successful api call for adding vote, call tweet api via method patch to update the tweet's reactions (add reaction id)
 export const voteTweet = async (tweetId, userId, reactionType) => {
-  const response = await fetch(`${TwEET_API_BASE_URL}/reaction`, {
+  const response = await fetch(`${API_BASE_URL}/reaction`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -69,7 +66,7 @@ export const voteTweet = async (tweetId, userId, reactionType) => {
 
   // call tweet api patch for reaction
   const patchReactionResponse = await fetch(
-    `${TwEET_API_BASE_URL}/${UPDATE_TWEETREACTIONS}`,
+    `${API_BASE_URL}/${UPDATE_TWEETREACTIONS}`,
     {
       method: "PATCH",
       headers: {
@@ -99,7 +96,7 @@ export const voteTweet = async (tweetId, userId, reactionType) => {
 };
 
 export const unVoteTweet = async (tweetId, reactionId) => {
-  const response = await fetch(`${TwEET_API_BASE_URL}/reaction`, {
+  const response = await fetch(`${API_BASE_URL}/reaction`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
@@ -124,7 +121,7 @@ export const unVoteTweet = async (tweetId, reactionId) => {
 
   // call tweet api patch for reaction
   const patchReactionResponse = await fetch(
-    `${TwEET_API_BASE_URL}/${UPDATE_TWEETREACTIONS}`,
+    `${API_BASE_URL}/${UPDATE_TWEETREACTIONS}`,
     {
       method: "PATCH",
       headers: {
@@ -154,7 +151,7 @@ export const unVoteTweet = async (tweetId, reactionId) => {
 };
 
 export const updateTweet = async (tweetId, tweetBody) => {
-  const response = await fetch(TwEET_API_BASE_URL, {
+  const response = await fetch(API_BASE_URL, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",

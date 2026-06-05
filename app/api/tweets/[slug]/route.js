@@ -14,7 +14,7 @@ import mongoose from "mongoose";
 import { NextResponse, NextRequest } from "next/server";
 import { Viewer } from "@/lib/models/Viewer";
 
-export const GET = async (_request, { params }) => {
+export const GET = async (request, { params }) => {
   const session = await auth();
 
   if (!session) {
@@ -25,6 +25,9 @@ export const GET = async (_request, { params }) => {
   }
 
   const { slug } = await params;
+  const { searchParams } = new URL(request.url);
+  const action = searchParams.get("action") || "getTweet";
+
   if (!slug) {
     return NextResponse.json(
       { success: false, error: "Missing required param: tweetId." },
@@ -32,32 +35,61 @@ export const GET = async (_request, { params }) => {
     );
   }
 
-  const tweet = await findTweetById(slug);
-  // console.log("tweet: ", tweet);
-
-  // using populate
-  // not used because of the initial design that the output should have a added fields that can only be achieved using aggregation.
-  // const tweet = await Tweet.findById(slug)
-  // .populate("author", "_id firstName lastName maidenName username email")
-  // .populate("reactions", "_id type reaction_by")
-  // .populate({
-  //   path: "comments",
-  //   select: "_id comment comment_by createdAt",
-  //   populate: {
-  //     path: "comment_by",
-  //     select: "_id firstName lastName maidenName username email",
-  //   },
-  // })
-  // .lean();
-
-  if (!tweet) {
+  if (!mongoose.Types.ObjectId.isValid(slug)) {
     return NextResponse.json(
-      { success: false, error: "Tweet not found" },
-      { status: 404 },
+      { success: false, error: "Invalid tweetId" },
+      { status: 400 },
     );
   }
 
-  return NextResponse.json({ success: true, tweet }, { status: 200 });
+  switch (action) {
+    case "getTweet":
+      const tweet = await findTweetById(slug);
+      if (!tweet) {
+        return NextResponse.json(
+          { success: false, error: "Tweet not found" },
+          { status: 404 },
+        );
+      }
+      return NextResponse.json({ success: true, tweet }, { status: 200 });
+    case "getViewers":
+      //find the viewers of the tweet, using the slug params which contains the tweet_id
+      //populate the user_id that is reference to user document
+      const tweetViewer = await Viewer.find({ tweet_id: slug })
+        .populate("user_id", "firstName lastName username")
+        .lean();
+      return NextResponse.json(
+        { success: true, tweet_viewers: tweetViewer },
+        { status: 200 },
+      );
+    case "getUpReactors":
+      const upReactors = await Reaction.find({ tweet_id: slug, type: "upvote" })
+        .populate("reaction_by", "firstName lastName username")
+        .lean();
+      return NextResponse.json(
+        { success: true, tweet_upreactors: upReactors },
+        { status: 200 },
+      );
+    case "getDownReactors":
+      const downReactors = await Reaction.find({
+        tweet_id: slug,
+        type: "downvote",
+      })
+        .populate("reaction_by", "firstName lastName username")
+        .lean();
+      return NextResponse.json(
+        { success: true, tweet_downreactors: downReactors },
+        { status: 200 },
+      );
+    default:
+      return NextResponse.json(
+        {
+          success: false,
+          error: `Invalid action: ${action}.`,
+        },
+        { status: 400 },
+      );
+  }
 };
 
 // update tweet
@@ -76,8 +108,9 @@ export const PATCH = async (request, { params }) => {
     await connectDB();
 
     const { slug } = await params;
-    const { tweetId, reactionId, isVote, commentId, userId } =
-      await request.json();
+    const body = await request.json();
+
+    const { tweetId, reactionId, isVote, commentId, userId } = body;
 
     if (!slug) {
       return NextResponse.json(
@@ -95,6 +128,17 @@ export const PATCH = async (request, { params }) => {
         {
           success: false,
           error: "Missing required fields: tweetId.",
+        },
+        { status: 400 },
+      );
+    }
+
+    //check if tweetId is a valid mongoose ObjectId
+    if (!mongoose.Types.ObjectId.isValid(tweetId)) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Invalid tweetId.",
         },
         { status: 400 },
       );
@@ -137,7 +181,7 @@ export const PATCH = async (request, { params }) => {
         return NextResponse.json(
           {
             success: true,
-            message: "Tweet views successfully incremented",
+            message: "Tweet views successfully counted",
             tweet: updatedTweet,
           },
           { status: 200 },
