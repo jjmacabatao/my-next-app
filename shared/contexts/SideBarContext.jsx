@@ -8,9 +8,9 @@ import { createContext, useContext, useEffect, useState } from "react";
     const [activeMenu, setActiveMenu] = useState(pathname);
     
 
-    useEffect(()=> {
-       console.log("active menu: ", activeMenu);
-    },[activeMenu]);
+    // useEffect(()=> {
+    //    console.log("active menu: ", activeMenu);
+    // },[activeMenu]);
 
     const value = {
         activeMenu,

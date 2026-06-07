@@ -3,6 +3,7 @@ import { findTweetById } from "@/features/tweets/services/tweet.service";
 import { Tweet } from "@/lib/models/Tweet";
 import { Comment } from "@/lib/models/Comment";
 import { Reaction } from "@/lib/models/Reaction";
+import { Notification } from "@/lib/models/Notification";
 import { User } from "@/lib/models/User";
 import { connectDB } from "@/lib/mongoose";
 import {
@@ -110,7 +111,7 @@ export const PATCH = async (request, { params }) => {
     const { slug } = await params;
     const body = await request.json();
 
-    const { tweetId, reactionId, isVote, commentId, userId } = body;
+    const { tweetId, reactionId, isVote, commentId, userId, notifId } = body;
 
     if (!slug) {
       return NextResponse.json(
@@ -144,9 +145,23 @@ export const PATCH = async (request, { params }) => {
       );
     }
 
+    if (notifId) {
+      //check if tweetId is a valid mongoose ObjectId
+      if (!mongoose.Types.ObjectId.isValid(notifId)) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: "Invalid notifId.",
+          },
+          { status: 400 },
+        );
+      }
+    }
+
     // check slug value for the appropriate patch request
     switch (slug) {
       case UPDATE_VIEWS:
+        let viewerdataSave = false;
         // Check if provided tweetId exist
         const tweet = await Tweet.findById(tweetId);
 
@@ -171,7 +186,15 @@ export const PATCH = async (request, { params }) => {
             tweet.views += 1;
 
             await tweet.save();
+            viewerdataSave = true;
           }
+        }
+
+        // //update notification to opened true
+        if (notifId) {
+          const filter = { _id: notifId };
+          const update = { $set: { opened: true } };
+          await Notification.updateOne(filter, update);
         }
 
         // get the updated tweet reflecting all the aggregations
@@ -183,6 +206,7 @@ export const PATCH = async (request, { params }) => {
             success: true,
             message: "Tweet views successfully counted",
             tweet: updatedTweet,
+            viewerdataSave: viewerdataSave,
           },
           { status: 200 },
         );
@@ -251,7 +275,7 @@ const updateTweetReactions = async (tweetId, reactionId, isVote) => {
   const updateTweetResult = await Tweet.updateOne(filter, update);
 
   //check if the update is successful, matchedCount = 0 means tweet not found and no update was executed.
-  console.log(updateTweetResult);
+  // console.log(updateTweetResult);
   if (!updateTweetResult.matchedCount === 0) {
     return NextResponse.json(
       { success: false, error: "Tweet not found." },
@@ -307,7 +331,7 @@ const updateTweetComments = async (tweetId, commentId) => {
   const updateTweetResult = await Tweet.updateOne(filter, update);
 
   //check if the update is successful, matchedCount = 0 means tweet not found and no update was executed.
-  console.log(updateTweetResult);
+  // console.log(updateTweetResult);
   if (!updateTweetResult.matchedCount === 0) {
     return NextResponse.json(
       { success: false, error: "Tweet not found." },

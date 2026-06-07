@@ -9,13 +9,14 @@ export default auth((request) => {
   console.log("pathname: ", pathname);
   // protected route
   const isProtectedRoute = pathname.startsWith("/tweets");
+  const isProtectedRouteIndex = pathname.startsWith("/");
   const isAuthRoute = pathname.startsWith("/auth");
 
   // protected api route
   const isProtectedApiRoute = pathname.startsWith("/api/tweets");
 
   // protected route checking
-  if (!isLoggedIn && isProtectedRoute) {
+  if (!isLoggedIn && (isProtectedRoute || isProtectedRouteIndex)) {
     return NextResponse.redirect(new URL("/auth", request.url));
   }
 

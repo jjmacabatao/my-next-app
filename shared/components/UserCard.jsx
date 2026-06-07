@@ -16,7 +16,7 @@ const UserCard = ({ user }) => {
             <span className="text-gray-400 text-xs">
               @{userData.username}
             </span>
-            <span className="rounded-full px-2 py-0.5 text-xs bg-gray-100 text-gray-5 00">
+            <span className="rounded-full px-2 py-0.5 text-xs bg-gray-100 text-gray-500">
               {timeAgo(user.createdAt)}
             </span>
         </section>

@@ -164,7 +164,7 @@ export const updateTweet = async (tweetId, tweetBody) => {
   });
 
   const data = await response.json();
-  console.log("Response from updateTweet, tweet.api.client.js", data);
+  // console.log("Response from updateTweet, tweet.api.client.js", data);
   if (!data.success) {
     console.error("Failed to update tweet: ", data.error);
     return null;

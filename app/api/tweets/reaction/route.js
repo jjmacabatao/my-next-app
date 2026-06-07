@@ -16,7 +16,7 @@ export const POST = async (request) => {
   await connectDB();
 
   const { type, reaction_by, tweet_id } = await request.json();
-  console.log("Received reaction data:", { type, reaction_by, tweet_id });
+  // console.log("Received reaction data:", { type, reaction_by, tweet_id });
   if (!type || !reaction_by || !tweet_id) {
     return NextResponse.json(
       {

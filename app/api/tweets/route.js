@@ -44,7 +44,7 @@ export const GET = async () => {
 
 export const POST = async (request) => {
   // check if the session is null
-  const session = await auth(request);
+  const session = await auth();
   if (!session) {
     return NextResponse.json(
       {
@@ -129,7 +129,7 @@ export const DELETE = async (request) => {
   } catch (error) {
     return NextResponse.json(
       { success: false, error: "Failed to delete tweet" },
-      { status: 500 },
+      { status: 400 },
     );
   }
 };

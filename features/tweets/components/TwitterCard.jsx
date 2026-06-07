@@ -2,7 +2,7 @@
 
 
 import { border, card, layout, typography } from '@/shared/styles/globalN';
-import { ArrowBigLeft, ArrowLeft, Ellipsis, MessageCircle, PencilIcon, Trash2, X } from 'lucide-react';
+import { ArrowLeft, Ellipsis, MessageCircle, PencilIcon, Trash2, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react'
 import DownVote from './DownVote';
@@ -18,6 +18,7 @@ import { deleteTweet } from '../services/tweet.api.client.service';
 import showAlert from '@/lib/alert';
 import { timeAgo } from '@/lib/utils';
 import ViewerList from '@/features/views/component/ViewerList';
+import { createNotification } from '@/features/notification/services/notif.api.client.service';
 
 
 const TwitterCard = ({ tweet, isSingleView = false }) => {
@@ -26,7 +27,6 @@ const TwitterCard = ({ tweet, isSingleView = false }) => {
   const { upVoteTweet, downVoteTweet, unVoteUpDownTweet, setIsUpdateTweetModalOpen, isUpdateTweetModalOpen, setTweetForUpdate, isTweetsViewersModalOpen, setIsTweetViewersModalOpen, setTweetIdForViewers} = useTweet();
   const {data: session} = useSession();
  
-  const [openModal, setModal] = useState(false);
   const [isCardActionOpen, setIsCardActionOpen] = useState(false);
 
 
@@ -35,10 +35,7 @@ const TwitterCard = ({ tweet, isSingleView = false }) => {
     return null;
   }
 
-  // handles modal for updating tweets
-  const handleModal = () => {
-    setModal(!openModal)
-  }
+  const userId =  session.user?.name?.id || '';
 
   // handles the deletion of tweet
   const handleDelete = async (id) => {
@@ -58,7 +55,7 @@ const TwitterCard = ({ tweet, isSingleView = false }) => {
         return;
       }
 
-      console.log("Tweet deleted successfully: ", response);
+      // console.log("Tweet deleted successfully: ", response);
       showAlert('success', "Tweet deleted successfully");
 
     } catch (error) {
@@ -79,7 +76,7 @@ const TwitterCard = ({ tweet, isSingleView = false }) => {
   
   // handles the adding and removing upvote.
   // if isVoted then remove upvote otherwise add
-  const handleUpvote = async (tweetId,isVoted, reactionId) => {
+  const handleUpvote = async (tweetId,isVoted, reactionId,tweetAuthor) => {
     let upvote;
     try {
       if (isVoted) {
@@ -96,6 +93,10 @@ const TwitterCard = ({ tweet, isSingleView = false }) => {
         return;
       }
 
+      // create notification
+      if (userId !== tweetAuthor){
+        await createNotification(tweetId,userId,tweetAuthor,`${isVoted ? 'unupvoted' : 'upvoted'} your post.`);
+      }
       //success
       showAlert("success",isVoted ? "Upvote removed successfully." : "Tweet upvoted successfully.");
 
@@ -112,7 +113,7 @@ const TwitterCard = ({ tweet, isSingleView = false }) => {
 
   // handles the adding and removing downvote.
   // if isVoted then remove downvote otherwise add
-  const handleDownvote = async (tweetId, isVoted, reactionId) => {
+  const handleDownvote = async (tweetId, isVoted, reactionId,tweetAuthor) => {
     let downvote;
     try {
       if (isVoted) {
@@ -129,6 +130,11 @@ const TwitterCard = ({ tweet, isSingleView = false }) => {
         return;
       }
 
+      // create notification
+      if (tweetAuthor !== userId){
+        await createNotification(tweetId,userId,tweetAuthor,`${isVoted ? 'undownvoted' : 'downvoted'} your post.`);
+      }
+
       //success
       showAlert("success",isVoted ? "Downvote removed successfully." : "Tweet down voted successfully.");
 
@@ -141,7 +147,6 @@ const TwitterCard = ({ tweet, isSingleView = false }) => {
     }
   }
 
-  const userId =  session.user?.name?.id || '';
   //check if the user upvoted the tweet
   const isVotedUp =  tweet.reactions.some(reaction => reaction.reaction_by === userId && reaction.type === "upvote");
   //get the reaction id of the user if the tweet is upvoted
@@ -157,11 +162,11 @@ const TwitterCard = ({ tweet, isSingleView = false }) => {
   return (
     <>
       
-      <article className={`${card.base} ${card.padding} ${card.interactive} ${border.strong} relative mx-auto w-95 sm:w-md ${isSingleView && 'mt-8' } `}>
+      <article className={`${card.base} ${card.padding} ${card.interactive} ${border.strong} relative mx-auto w-full`}>
         {/* if isSingleView, show this menu */}
         {isSingleView && 
           <section className={`flex gap-3 justify-between mb-4`}>
-            <ArrowLeft className="w-5 h-5 text-gray-500 cursor-pointer" onClick={()=>window.history.back()}/>
+            <ArrowLeft className="w-5 h-5 text-gray-500 cursor-pointer hover:text-gray-900" onClick={()=>window.history.back()}/>
             {userId === tweet.author._id && (<Ellipsis className="w-5 h-5 text-gray-500 cursor-pointer" onMouseEnter={()=>setIsCardActionOpen(true)}/>)}
           </section>
         }
@@ -208,13 +213,13 @@ const TwitterCard = ({ tweet, isSingleView = false }) => {
            }
            
           <UpVote 
-            onUpvoteClick={() => handleUpvote(tweet._id, isVotedUp, reactionIdUp)} 
+            onUpvoteClick={() => handleUpvote(tweet._id, isVotedUp, reactionIdUp,tweet.author._id)} 
             votes={tweet.upvotes} 
             fill={isVotedUp}
           />
             
           <DownVote 
-            onDownvoteClick={() => handleDownvote(tweet._id, isVotedDown, reactionIdDown)} 
+            onDownvoteClick={() => handleDownvote(tweet._id, isVotedDown, reactionIdDown, tweet.author._id)} 
             votes={tweet.downvotes} 
             fill={isVotedDown} 
           />
@@ -227,7 +232,7 @@ const TwitterCard = ({ tweet, isSingleView = false }) => {
 
         {/* for comments */}
         {isSingleView && (
-          <TweetComments comments = {tweet.comments} tweetId={tweet._id}/>
+          <TweetComments comments = {tweet.comments} tweetId={tweet._id} tweetAuthor={tweet.author._id}/>
         )}
         
           

@@ -16,9 +16,7 @@ const HomePage = async () => {
   }
 
   return (
-    <div
-      className={`max-w-lg mx-auto pl-6 px-6 sm:px-6 lg:px-8 py-6 sm:pl-6 w-full`}
-    >
+    <div className={`p-4 sm:p-5 m-auto w-full sm:w-150 mt-2 sm:mt-4`}>
       <TweetForm />
       <TweetLists />
     </div>

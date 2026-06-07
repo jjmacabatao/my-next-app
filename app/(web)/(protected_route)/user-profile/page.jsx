@@ -1,5 +1,4 @@
 import { auth } from "@/auth";
-import ViewerList from "@/features/views/component/ViewerList";
 import { card, layout, surface, radius } from "@/shared/styles/globalN";
 import { redirect } from "next/navigation";
 

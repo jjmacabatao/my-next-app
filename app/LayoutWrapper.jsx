@@ -1,5 +1,6 @@
 "use client"
 
+import FooterMenu from '@/shared/components/FooterMenu'
 import Header from '@/shared/components/Header'
 import SideBar from '@/shared/components/SideBar'
 import { usePathname } from 'next/navigation'
@@ -15,7 +16,9 @@ const LayoutWrapper = ( {children} ) => {
           <div className="flex">
             {pathname !== "/auth" && <SideBar />}
             <main className="flex-1"> {children}</main>
+            
           </div>
+          {pathname !== "/auth" && <FooterMenu />}
     </>
   )
 }

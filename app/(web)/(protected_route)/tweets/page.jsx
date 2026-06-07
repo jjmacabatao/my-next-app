@@ -2,7 +2,7 @@
 import { auth } from '@/auth';
 import TweetForm from '@/features/tweets/components/TweetForm'
 import TweetLists from '@/features/tweets/components/TweetLists'
-import { redirect } from 'next/dist/server/api-utils';
+import { redirect } from 'next/navigation';
 import React from 'react'
 
 //is a route segment configuration that forces a page or layout to be dynamically rendered on every user request.
@@ -10,17 +10,15 @@ import React from 'react'
 export const dynamic = "force-dynamic";
 
 const TwitterPage = async () => {
-   const session = await auth();
+  const session = await auth();
    
-     if (!session) {
-       redirect("/auth");
-     }
+  if (!session) {
+    redirect("/auth");
+  }
 
   return (
     <>
-      <div
-      className={`max-w-lg mx-auto pl-6 px-6 sm:px-6 lg:px-8 py-6 sm:pl-6 w-full`}
-      >
+      <div className={`p-4 sm:p-5 m-auto w-full sm:w-150 mt-2 sm:mt-4`}>
         <TweetForm />
         <TweetLists />
       </div>
@@ -29,5 +27,3 @@ const TwitterPage = async () => {
 }
 
 export default TwitterPage
-
-// https://www.youtube.com/watch?v=Sklc_fQBmcs

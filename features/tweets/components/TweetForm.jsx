@@ -19,14 +19,20 @@ const TweetForm = () => {
     // const [error, setError] = useState("");
 
     const {data: session, status} = useSession();
-
+            
     useEffect(()=>{
-        if (!session) {
-            console.log("Unauthorized! Session is null.")
+
+        // return if session is not yet loaded
+        if (status === "loading") {
+            return;
+        }
+        // router push to /auth if not authenticated
+        if (status === "unauthenticated") {
             router.push("/auth");
             return;
         }
-    },[session, router]);
+
+    },[router, status]);
     
     // handle tweet input change action
     const handleInputChange = (e) => {
@@ -76,7 +82,7 @@ const TweetForm = () => {
     }
   return (
     <>
-        <section className={`${card.base} ${card.padding} ${border.strong} mb-6 mx-auto w-95 sm:w-md`}>
+        <section className={`${card.base} ${card.padding} ${border.strong} mb-6 mx-auto w-full`}>
             <form className='flex flex-col space-y-4 w-full' onSubmit={handleCreateTweet}>
                 <section className='flex flex-row w-full gap-2'>
                     <Avatar avatarSrc={'/profile.png'} avatarAlt={'Profile Picture'} avatarWidth={60} avatarHeight={60} />

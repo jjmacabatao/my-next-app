@@ -43,7 +43,7 @@ export const getAllTweets = async () => {
   }
 };
 
-export const updateTweetViews = async (tweetId, userId) => {
+export const updateTweetViews = async (tweetId, userId, notifId) => {
   const cookieStore = await cookies();
   const response = await fetch(`${API_BASE_URL}/update-views`, {
     method: "PATCH",
@@ -54,6 +54,7 @@ export const updateTweetViews = async (tweetId, userId) => {
     body: JSON.stringify({
       tweetId: tweetId,
       userId: userId,
+      notifId: notifId,
     }),
   });
 

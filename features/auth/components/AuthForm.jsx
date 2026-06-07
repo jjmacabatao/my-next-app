@@ -120,9 +120,9 @@ const AuthForm = () => {
     }
 
     return (
-        <section className={`${layout.stack} ${layout.center} ${card.base} ${card.padding} ${surface.base} ${border.strong} w-100 mx-auto mt-20 mb-10`}>
-            <h1 className='text-2xl font-bold mt-4'>Twitter-Clone</h1>
-            <div className='border-b  border-gray-200 w-full'>
+        <section className={`${layout.stack} ${layout.center} ${card.base} ${card.padding} w-85 sm:100 mx-auto mt-10`}>
+            <h1 className='text-2xl font-bold mt-2'>Twitter-Clone</h1>
+            <div className='border-b border-gray-200 w-full'>
                 <nav className={`flex flex-row gap-6 border-gray-200 w-55 mx-auto`}>
                     <button onClick={() => setActiveForm('login')} className={`text-gray-600 py-4 px-6 block hover:text-blue-500 focus:outline-none ${activeForm === 'login' && 'text-blue-500 border-b-3 font-medium border-blue-500 transition-all'}`}>
                         Login

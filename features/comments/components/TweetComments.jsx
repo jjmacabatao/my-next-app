@@ -2,12 +2,14 @@
 import { button, card, input, layout, text } from '@/shared/styles/globalN'
 import React, { useState } from 'react'
 import CommentCard from './CommentCard'
-import { createComment } from '@/features/comments/services/comment.api.server.service';
+import { createComment, deleteComment } from '@/features/comments/services/comment.api.server.service';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import showAlert from '@/lib/alert';
+import { createNotification } from '@/features/notification/services/notif.api.client.service';
 
-const TweetComments = ( { tweetId, comments } ) => {
+
+const TweetComments = ( { tweetId, comments, tweetAuthor } ) => {
     const router = useRouter();
     const commentLen = comments.length;
     const [comment, setComment] = useState("");
@@ -20,6 +22,7 @@ const TweetComments = ( { tweetId, comments } ) => {
         return null;
     }   
 
+    //function that handles comment creation
     const handleCreateComment = async (e) => {
         e.preventDefault();
         try {
@@ -33,16 +36,48 @@ const TweetComments = ( { tweetId, comments } ) => {
             }
 
             setComment("");
+
+            // create notification
+            if (userId !== tweetAuthor) {
+                await createNotification(tweetId,userId,tweetAuthor,`commented on your post.`);
+            }
+
             setLoading(false);
 
             showAlert("success","Comment successfully posted");
             
-            console.log(response.newComment);
+            // console.log(response.newComment);
+            // console.log("Notification state: ",notification);
 
         } catch (error) {
             setError("[Catch]Create comment error: ", error.message)
         }finally {
             setLoading(false);
+            router.refresh();
+        }
+    }
+
+    //function that handles comment deletion
+    const handleDeleteComment = async (commentId) => {
+        try {
+            const deleteCommentResponse = await deleteComment(commentId);
+
+            if (!deleteCommentResponse.success){
+                showAlert("danger",deleteCommentResponse.error);
+                return;
+            }
+            
+            const userId = session.user?.name?.id;
+            // create notification
+            if(userId !== tweetAuthor) {
+                await createNotification(tweetId,userId,tweetAuthor,`deleted a comment on your post.`);
+            }
+            
+            showAlert("success", deleteCommentResponse.message);
+
+        } catch (error) {
+            showAlert("danger", error.message);
+        }finally {
             router.refresh();
         }
     }
@@ -55,7 +90,7 @@ const TweetComments = ( { tweetId, comments } ) => {
             {
                 commentLen > 0 ?
                     comments.map((comment) => (
-                            <CommentCard key={comment._id} comment={comment} />
+                            <CommentCard key={comment._id} comment={comment} onDelete={()=>handleDeleteComment(comment._id)}/>
                         )  
                     )
                 :

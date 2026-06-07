@@ -7,6 +7,7 @@ import {
 } from "@/lib/utils";
 import { cookies } from "next/headers";
 
+//function for creating user's comment in a post
 export const createComment = async (tweetId, userId, comment) => {
   try {
     const cookieStore = await cookies();
@@ -31,7 +32,8 @@ export const createComment = async (tweetId, userId, comment) => {
       return null;
     }
 
-    // call tweet api patch for reaction
+    // call tweet api patch for comment
+    // update Tweet document, push the id of the newly added comment to the comments array
     const patchReactionResponse = await fetch(
       `${API_BASE_URL}/${UPDATE_TWEETCOMMENTS}`,
       {
@@ -69,4 +71,38 @@ export const createComment = async (tweetId, userId, comment) => {
   }
 };
 
-//helper function
+//function for deleting user's comment in a post
+export const deleteComment = async (commentId) => {
+  try {
+    const cookieStore = await cookies();
+    const deleteCommentResponse = await fetch(`${API_BASE_URL}/comment`, {
+      method: "DELETE",
+      headers: {
+        Cookie: cookieStore.toString(),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        commentId: commentId,
+      }),
+    });
+
+    if (!deleteCommentResponse.ok) {
+      console.error(`Failed to delete comment with an id of ${commentId}`);
+      return {
+        success: false,
+        error: `Failed to delete comment with an id of ${commentId}`,
+        deletedComment: [],
+      };
+    }
+
+    const deleteCommentResponseData = await deleteCommentResponse.json();
+    return deleteCommentResponseData;
+  } catch (error) {
+    console.error("[CommentAPI][Catch]Delete comment error: ", error.message);
+    return {
+      success: false,
+      error: error.message,
+      deletedComment: [],
+    };
+  }
+};

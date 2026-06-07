@@ -23,7 +23,7 @@ export const TweetProvider = ({ children }) => {
             return;
         }
         
-        console.log(vote);
+        // console.log(vote);
 
         return vote;
     };
@@ -34,7 +34,7 @@ export const TweetProvider = ({ children }) => {
         // Implement the logic to remove an upvote from a tweet, which may involve sending a request to the backend to update the tweet's reaction data and then updating the local state to reflect the change in the UI.
         console.log("Removing upvote with reaction ID: ", reactionId);
         const unVote = await unVoteTweet(tweetId, reactionId);
-        console.log("Response from unVoteUpTweet API, TweetContext:", unVote.success, unVote);
+        // console.log("Response from unVoteUpTweet API, TweetContext:", unVote.success, unVote);
         if (!unVote.success) {
             console.error("Failed to remove vote from tweet: ", unVote.error);
             return;
