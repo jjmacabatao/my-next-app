@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation'
 import { signIn } from 'next-auth/react'
 import { toast } from 'sonner'
 import showAlert from '@/lib/alert'
+import { API_AUTH_BASE_URL } from '@/lib/utils'
 
 
 const signUpObj = {
@@ -38,7 +39,7 @@ const AuthForm = () => {
 
         try {
             setLoading(true);
-            const response = await fetch("http://localhost:3000/api/auth/register",{
+            const response = await fetch(`${API_AUTH_BASE_URL}/register`,{
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
