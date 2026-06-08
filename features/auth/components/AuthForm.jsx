@@ -29,7 +29,6 @@ const AuthForm = () => {
     const [loginForm, setLoginForm] = useState(loginObj);
 
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState("");
 
     const router = useRouter();
     
@@ -83,16 +82,15 @@ const AuthForm = () => {
             // console.log("response for signin nextauth:",response);
             
             if (response?.error) {
-                setError(response.error === 'CredentialsSignin' ? "Invalid email or password. Please try again." : `Something went wrong. ${response.error}`);
+                // setError(response.error === 'CredentialsSignin' ? "Invalid email or password. Please try again." : `Something went wrong. ${response.error}`);
+                showAlert("danger",response.error === 'CredentialsSignin' ? "Invalid email or password. Please try again." : `Something went wrong. ${response.error}`);
                 return;
             } 
 
             router.replace("/");
             
         }catch (error) {
-            console.log(error.message);
-
-            setError(error.message);
+            showAlert("danger", error.message);
         }finally {
             setLoading(false);
         }
@@ -123,20 +121,17 @@ const AuthForm = () => {
         <section className={`${layout.stack} ${layout.center} ${card.base} ${card.padding} w-85 sm:100 mx-auto mt-10`}>
             <h1 className='text-2xl font-bold mt-2'>Twitter-Clone</h1>
             <div className='border-b border-gray-200 w-full'>
-                <nav className={`flex flex-row gap-6 border-gray-200 w-55 mx-auto`}>
-                    <button onClick={() => setActiveForm('login')} className={`text-gray-600 py-4 px-6 block hover:text-blue-500 focus:outline-none ${activeForm === 'login' && 'text-blue-500 border-b-3 font-medium border-blue-500 transition-all'}`}>
+                <nav className={`flex flex-row gap-2 border-gray-200 w-full mx-auto justify-around`}>
+                    <button onClick={() => setActiveForm('login')} className={`w-full text-gray-600 py-4 px-6 block hover:text-blue-500 focus:outline-none ${activeForm === 'login' && 'text-blue-500 border-b-3 font-semibold border-blue-500'}  transition-all`}>
                         Login
                     </button>
-                    <button onClick={() => setActiveForm('signup')} className={`text-gray-600 py-4 px-6 block hover:text-blue-500 focus:outline-none ${activeForm === 'signup' && 'text-blue-500 border-b-3 font-medium border-blue-500 transition-all'}`}>
+                    <button onClick={() => setActiveForm('signup')} className={`w-full text-gray-600 py-4 px-6 block hover:text-blue-500 focus:outline-none ${activeForm === 'signup' && 'text-blue-500 border-b-3 font-semibold border-blue-500'}  transition-all`}>
                         Sign Up
                     </button>
                 </nav>
             </div>
 
             <section className={` w-full space-y-4 ${activeForm === 'login' || 'hidden'}`}>
-                {
-                    (error && activeForm === 'login') && <span className={`${alert.base} ${alert.variants.danger} text-xs`}>{error}</span>
-                }
                 <span className={`${text.primary} text-lg font-bold`}>Welcome back!</span>
                 <p className={`${text.muted} text-xs`}>Catch up on the latest posts and conversations.</p>
                 <form className='flex flex-col gap-4' onSubmit={login}>
@@ -152,9 +147,6 @@ const AuthForm = () => {
             </section>
 
             <section className={` w-full space-y-4 ${activeForm === 'signup' || 'hidden'}`}>
-                {
-                    (error && activeForm === 'signup') && <span className={`${alert.base} ${alert.variants.danger} text-xs`}>{error}</span>
-                }
                 <span className={`${text.primary} text-lg font-bold`}>Create your account</span>
                 <p className={`${text.muted} text-xs`}>See what's happening and be part of it.</p>
                 <form className='flex flex-col gap-4 mt-4' onSubmit={register}>

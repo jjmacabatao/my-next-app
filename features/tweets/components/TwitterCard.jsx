@@ -16,7 +16,7 @@ import Link from 'next/link';
 import TweetComments from '../../comments/components/TweetComments';
 import { deleteTweet } from '../services/tweet.api.client.service';
 import showAlert from '@/lib/alert';
-import { timeAgo } from '@/lib/utils';
+import { GET_USER_TWEETS_AND_COMMENT, timeAgo } from '@/lib/utils';
 import ViewerList from '@/features/views/component/ViewerList';
 import { createNotification } from '@/features/notification/services/notif.api.client.service';
 
@@ -176,7 +176,9 @@ const TwitterCard = ({ tweet, isSingleView = false }) => {
 
           <section className="flex-1">
             <h3 className="text-md font-semibold">
-              {tweet.author.firstName} {tweet.author.lastName}
+              <Link href={`/user-profile?userId=${tweet.author._id}&action=${GET_USER_TWEETS_AND_COMMENT}`} className='hover:underline'>
+                {tweet.author.firstName} {tweet.author.lastName}
+              </Link>
             </h3>
             <span className="text-gray-400 text-sm">
               @{tweet.author.username}

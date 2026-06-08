@@ -1,3 +1,5 @@
+"use client"
+
 import { timeAgo } from '@/lib/utils'
 import Avatar from '@/shared/components/Avatar'
 import { layout, typography } from '@/shared/styles/globalN'
@@ -5,7 +7,7 @@ import { Trash2 } from 'lucide-react'
 import { useSession } from 'next-auth/react'
 import React from 'react'
 
-const CommentCard = ( {comment, onDelete} ) => {
+const CommentCard = ( {comment, onDelete, withDeleleFn = true} ) => {
     const {data:session} = useSession();
 
     if (!session) {
@@ -32,7 +34,7 @@ const CommentCard = ( {comment, onDelete} ) => {
                     
                 </section>
                 {
-                    (session.user?.name?.id === comment.comment_by._id) && <Trash2 size={13} className="text-gray-500 cursor-pointer transition-all hover:fill-black" onClick={onDelete}/>
+                    (session.user?.name?.id === comment.comment_by._id && withDeleleFn) && <Trash2 size={13} className="text-gray-500 cursor-pointer transition-all hover:fill-black" onClick={onDelete}/>
                 }
                 
             </div>

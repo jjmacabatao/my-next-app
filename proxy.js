@@ -14,6 +14,7 @@ export default auth((request) => {
 
   // protected api route
   const isProtectedApiRoute = pathname.startsWith("/api/tweets");
+  const isProtectedApiUserRoute = pathname.startsWith("/api/user");
 
   // protected route checking
   if (!isLoggedIn && (isProtectedRoute || isProtectedRouteIndex)) {
@@ -21,7 +22,7 @@ export default auth((request) => {
   }
 
   // protected api route checking
-  if (!isLoggedIn && isProtectedApiRoute) {
+  if (!isLoggedIn && (isProtectedApiRoute || isProtectedApiUserRoute)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

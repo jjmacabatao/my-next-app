@@ -32,7 +32,7 @@ export const GET = async (request) => {
           success: false,
           error: "Missing required field: forUserId",
         },
-        { status: 401 },
+        { status: 400 },
       );
     }
 
@@ -62,10 +62,7 @@ export const GET = async (request) => {
       { status: 201 },
     );
   } catch (error) {
-    return NextResponse.json(
-      { success: false, error: error.message },
-      { status: 401 },
-    );
+    return NextResponse.json({ success: false, error: error.message }, 0);
   }
 };
 
@@ -93,7 +90,7 @@ export const POST = async (request) => {
           error:
             "Missing required fields: tweetId, fromUserId,toUserId, and message",
         },
-        { status: 401 },
+        { status: 400 },
       );
     }
 
@@ -144,7 +141,7 @@ export const POST = async (request) => {
   } catch (error) {
     return NextResponse.json(
       { success: false, error: error.message },
-      { status: 401 },
+      { status: 400 },
     );
   }
 };

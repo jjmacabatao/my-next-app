@@ -1,26 +1,50 @@
 import { auth } from "@/auth";
-import { card, layout, surface, radius } from "@/shared/styles/globalN";
+import UserProfile from "@/features/user-profile/components/UserProfile";
+import { API_USER_BASE_URL } from "@/lib/utils";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-const Profile = async () => {
+const Profile = async ({searchParams}) => {
   const session = await auth();
 
   if (!session) {
     redirect("/auth");
   }
 
-  return (
-    <>
-      <p>Profile page - Ongoing</p>
-      <section className={`${layout.section} ${surface.base} ${card.base} ${card.padding} mx-auto w-100 md:w-150`}>
+  const { userId } = await searchParams;
+  const currentUser = session.user?.name?.id;
+  const profileUserId = userId || currentUser;
+  
+  const getUserTweetAndComments = async () => {
+    try {
+      const cookiesStore = await cookies();
+      const responseGetUserTweetAndComment = await fetch(`${API_USER_BASE_URL}?userId=${profileUserId}&action=getUserTweetsAndComments`, {
+        headers: {
+          Cookie: cookiesStore.toString(),
+        }
+        });
+      
+      if (!responseGetUserTweetAndComment.ok) {
+        console.error("Failed to load user's tweets and comments");
+      }
 
-        <section className="relative border min-h-50">
-          <div className={`border w-30 h-30 ${radius.full} mx-auto`}>
-            <span className="m-auto">Test</span>
-          </div>
-        </section>
-      </section>
-    </>
+      const data = await responseGetUserTweetAndComment.json();
+
+      if(!data.success) {
+        console.error(data.error);
+      }
+
+      return data;
+    } catch (error) {
+      console.error("[Catch] getUserTweetAndComments error: ", error.message);
+    }
+    
+  }
+  
+  const userTweetsAndComments = await getUserTweetAndComments();
+
+  return (
+    <UserProfile userData={userTweetsAndComments} currentUser={currentUser}/>
   );
 };
 

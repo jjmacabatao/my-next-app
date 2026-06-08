@@ -37,7 +37,7 @@ export const GET = async () => {
   } catch (error) {
     return NextResponse.json(
       { success: false, error: error.message },
-      { status: 401 },
+      { status: 400 },
     );
   }
 };
@@ -86,7 +86,7 @@ export const POST = async (request) => {
   } catch (error) {
     return NextResponse.json(
       { success: false, error: error.message },
-      { status: 401 },
+      { status: 400 },
     );
   }
 };
