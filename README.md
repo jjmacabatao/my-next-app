@@ -45,14 +45,14 @@ app/
 |
 ├── api/
 │   ├── auth/
-│   ├── ├──[...nextauth]/ (for NextAuth impelemtation)
+│   ├── ├──[...nextauth]/ (catch all route for NextAuth implementation)
 │   │   |   └──route.js
 |   |   |
 │   ├── ├──register/
 │   │      └── route.js
 |   |
 │   ├── tweets/
-|   |   ├── [slug]/
+|   |   ├── [slug]/ (dynaminc route)
 |   |   |   └── route.js
 |   |   |
 |   |   ├── comment/
@@ -69,12 +69,12 @@ app/
 │   └── user/
 |       └── route.js
 |
-├── error.js
+├── error.js (is a special file-system convention used to handle runtime errors in a route segment.)
 ├── favicon.ico
 ├── globals.css
 ├── layout.js
 ├── LayoutWrapper.js
-├── loading.js
+├── loading.js (is a special file-system convention used to show a loading UI while a route segment is being fetched or rendered)
 ├── page.js
 |
 features/
@@ -116,8 +116,8 @@ shared/
 │   ├── context/
 │   ├── providers/
 │   └── styles/
-auth.js (for NextAuth impelemtation)
-proxy.js (for NextAuth impelemtation)
+auth.js (for NextAuth implementation)
+proxy.js (for NextAuth implementation)
 
 ```
 
