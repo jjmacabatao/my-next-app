@@ -3,7 +3,7 @@
 
 import { border, card, layout, typography } from '@/shared/styles/globalN';
 import { ArrowLeft, Ellipsis, MessageCircle, PencilIcon, Trash2, X } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import React, { useState } from 'react'
 import DownVote from './DownVote';
 import UpVote from './UpVote';
@@ -23,17 +23,23 @@ import { createNotification } from '@/features/notification/services/notif.api.c
 
 const TwitterCard = ({ tweet, isSingleView = false }) => {
   const router = useRouter();
-
+  const pathname = usePathname()
   const { upVoteTweet, downVoteTweet, unVoteUpDownTweet, setIsUpdateTweetModalOpen, isUpdateTweetModalOpen, setTweetForUpdate, isTweetsViewersModalOpen, setIsTweetViewersModalOpen, setTweetIdForViewers} = useTweet();
-  const {data: session} = useSession();
+  const {data: session, status} = useSession();
  
   const [isCardActionOpen, setIsCardActionOpen] = useState(false);
 
 
   // check session if available
-  if (!session) {
-    return null;
-  }
+  // return if session is not yet loaded
+    if (status === "loading") {
+        return;
+    }
+    // router push to /auth if not authenticated
+    if (status === "unauthenticated") {
+        router.push("/auth");
+        return;
+    }
 
   const userId =  session.user?.name?.id || '';
 
@@ -176,9 +182,14 @@ const TwitterCard = ({ tweet, isSingleView = false }) => {
 
           <section className="flex-1">
             <h3 className="text-md font-semibold">
-              <Link href={`/user-profile?userId=${tweet.author._id}&action=${GET_USER_TWEETS_AND_COMMENT}`} className='hover:underline'>
-                {tweet.author.firstName} {tweet.author.lastName}
-              </Link>
+              {
+                pathname === '/user-profile' ?
+                  <>{tweet.author.firstName} {tweet.author.lastName}</>
+                 :
+                  <Link href={`/user-profile?userId=${tweet.author._id}&action=${GET_USER_TWEETS_AND_COMMENT}`} className='hover:underline'>
+                    {tweet.author.firstName} {tweet.author.lastName}
+                  </Link>
+              }
             </h3>
             <span className="text-gray-400 text-sm">
               @{tweet.author.username}
@@ -193,7 +204,7 @@ const TwitterCard = ({ tweet, isSingleView = false }) => {
           {(!isSingleView && userId === tweet.author._id) && (<Ellipsis className="w-5 h-5 text-gray-500 cursor-pointer" onMouseEnter={()=>setIsCardActionOpen(true)}/>)}
         </section>
 
-        <section className={`mt-5 ${typography.body}`}>
+        <section className={`mt-5 ${typography.body} wrap-break-word`}>
           <p>{tweet.body}</p>
         </section>
         

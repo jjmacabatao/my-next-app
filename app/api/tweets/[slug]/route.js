@@ -7,6 +7,11 @@ import { Notification } from "@/lib/models/Notification";
 import { User } from "@/lib/models/User";
 import { connectDB } from "@/lib/mongoose";
 import {
+  GET_TWEET,
+  GET_TWEET_DOWNREACTORS,
+  GET_TWEET_STATS_DETAILS,
+  GET_TWEET_UPREACTORS,
+  GET_TWEET_VIEWERS,
   UPDATE_TWEETCOMMENTS,
   UPDATE_TWEETREACTIONS,
   UPDATE_VIEWS,
@@ -27,7 +32,7 @@ export const GET = async (request, { params }) => {
 
   const { slug } = await params;
   const { searchParams } = new URL(request.url);
-  const action = searchParams.get("action") || "getTweet";
+  const action = searchParams.get("action") || GET_TWEET;
 
   if (!slug) {
     return NextResponse.json(
@@ -44,7 +49,7 @@ export const GET = async (request, { params }) => {
   }
 
   switch (action) {
-    case "getTweet":
+    case GET_TWEET:
       const tweet = await findTweetById(slug);
       if (!tweet) {
         return NextResponse.json(
@@ -53,7 +58,7 @@ export const GET = async (request, { params }) => {
         );
       }
       return NextResponse.json({ success: true, tweet }, { status: 200 });
-    case "getViewers":
+    case GET_TWEET_VIEWERS:
       //find the viewers of the tweet, using the slug params which contains the tweet_id
       //populate the user_id that is reference to user document
       const tweetViewer = await Viewer.find({ tweet_id: slug })
@@ -63,7 +68,7 @@ export const GET = async (request, { params }) => {
         { success: true, tweet_viewers: tweetViewer },
         { status: 200 },
       );
-    case "getUpReactors":
+    case GET_TWEET_UPREACTORS:
       const upReactors = await Reaction.find({ tweet_id: slug, type: "upvote" })
         .populate("reaction_by", "firstName lastName username")
         .lean();
@@ -71,7 +76,7 @@ export const GET = async (request, { params }) => {
         { success: true, tweet_upreactors: upReactors },
         { status: 200 },
       );
-    case "getDownReactors":
+    case GET_TWEET_DOWNREACTORS:
       const downReactors = await Reaction.find({
         tweet_id: slug,
         type: "downvote",
@@ -80,6 +85,32 @@ export const GET = async (request, { params }) => {
         .lean();
       return NextResponse.json(
         { success: true, tweet_downreactors: downReactors },
+        { status: 200 },
+      );
+    case GET_TWEET_STATS_DETAILS:
+      const tweetStatViewer = await Viewer.find({ tweet_id: slug })
+        .populate("user_id", "firstName lastName username")
+        .lean();
+      const upReactorsStat = await Reaction.find({
+        tweet_id: slug,
+        type: "upvote",
+      })
+        .populate("reaction_by", "firstName lastName username")
+        .lean();
+      const downReactorsStat = await Reaction.find({
+        tweet_id: slug,
+        type: "downvote",
+      })
+        .populate("reaction_by", "firstName lastName username")
+        .lean();
+
+      return NextResponse.json(
+        {
+          success: true,
+          tweet_viewers: tweetStatViewer,
+          tweet_upreactors: upReactorsStat,
+          tweet_downreactors: downReactorsStat,
+        },
         { status: 200 },
       );
     default:

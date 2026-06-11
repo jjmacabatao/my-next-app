@@ -15,6 +15,7 @@ const signUpObj = {
     lastName: '',
     maidenName: '',
     email: '',
+    username: '',
     password: '',
     confirmPassword: '',
 }
@@ -39,6 +40,8 @@ const AuthForm = () => {
 
         try {
             setLoading(true);
+
+            // call api for registering a user
             const response = await fetch(`${API_AUTH_BASE_URL}/register`,{
                 method: 'POST',
                 headers: {
@@ -50,17 +53,18 @@ const AuthForm = () => {
             const result = await response.json();
 
             if (!result.success) {
-            //    toast(result.error);
                 showAlert("danger", result.error);
                 return;
             }
+
+            //reset signup form fields
+            setSignUpForm(signUpObj);
 
             showAlert("success", result.message);
 
             setActiveForm('login');
 
         } catch (error) {
-            // setError(error.message);
             showAlert("danger", error.message);
         }finally {
             setLoading(false);
@@ -152,13 +156,13 @@ const AuthForm = () => {
                 <p className={`${text.muted} text-xs`}>See what's happening and be part of it.</p>
                 <form className='flex flex-col gap-4 mt-4' onSubmit={register}>
                                 
-                    <input type="text" required name='firstName' placeholder='First Name*' className={`${input.base} w-full focus:ring-1`} onChange={handleOnchangeSignUpForm}/>
-                    <input type="text" required name='lastName' placeholder='Last Name*' className={`${input.base} w-full focus:ring-1`} onChange={handleOnchangeSignUpForm}/>
-                    <input type="text" name='maidenName' placeholder='Maiden Name (Optional)' className={`${input.base} w-full focus:ring-1`} onChange={handleOnchangeSignUpForm}/>
-                    <input type="text" required name='email' placeholder='Email*' className={`${input.base} w-full focus:ring-1`} onChange={handleOnchangeSignUpForm}/>
-                    <input type="text" required name='username' placeholder='Username*' className={`${input.base} w-full focus:ring-1`} onChange={handleOnchangeSignUpForm}/>
-                    <input type="password" required name='password' placeholder='Password*' className={`${input.base} w-full focus:ring-1`} onChange={handleOnchangeSignUpForm}/>
-                    <input type="password" required name='confirmPassword' placeholder='Confirm Password*' className={`${input.base} w-full focus:ring-1`} onChange={handleOnchangeSignUpForm}/>
+                    <input type="text" required name='firstName' value={signUpForm.firstName} placeholder='First Name*' className={`${input.base} w-full focus:ring-1`} onChange={handleOnchangeSignUpForm}/>
+                    <input type="text" required name='lastName' value={signUpForm.lastName} placeholder='Last Name*' className={`${input.base} w-full focus:ring-1`} onChange={handleOnchangeSignUpForm}/>
+                    <input type="text" name='maidenName' value={signUpForm.maidenName} placeholder='Maiden Name (Optional)' className={`${input.base} w-full focus:ring-1`} onChange={handleOnchangeSignUpForm}/>
+                    <input type="text" required name='email' value={signUpForm.email} placeholder='Email*' className={`${input.base} w-full focus:ring-1`} onChange={handleOnchangeSignUpForm}/>
+                    <input type="text" required name='username' value={signUpForm.username} placeholder='Username*' className={`${input.base} w-full focus:ring-1`} onChange={handleOnchangeSignUpForm}/>
+                    <input type="password" required name='password' value={signUpForm.password} placeholder='Password*' className={`${input.base} w-full focus:ring-1`} onChange={handleOnchangeSignUpForm}/>
+                    <input type="password" required name='confirmPassword' value={signUpForm.confirmPassword} placeholder='Confirm Password*' className={`${input.base} w-full focus:ring-1`} onChange={handleOnchangeSignUpForm}/>
 
                     <button type='submit' className={`${button.base} ${button.variants.solid} ${button.sizes.md} w-full`} disabled={loading}>
                         {loading ? 'Creating Account. . . .' : 'Create Account'}

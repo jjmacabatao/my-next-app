@@ -2,14 +2,14 @@
 
 import UserCard from '@/shared/components/UserCard'
 import React, { useEffect, useState } from 'react'
-import { getTweetDownReactors, getTweetUpReactors, getTweetViewers } from '../services/views.api.client.service';
+import { getTweetStatsDetails } from '../services/views.api.client.service';
 import UpVote from '@/features/tweets/components/UpVote';
 import DownVote from '@/features/tweets/components/DownVote';
 import TweetView from '@/features/tweets/components/TweetView';
 import { alert, text } from '@/shared/styles/globalN';
 import { useSession } from 'next-auth/react';
 import { useTweet } from '@/features/tweets/contexts/TweetContext';
-import { EyeOff, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 const ViewerList =  () => {
@@ -43,44 +43,85 @@ const ViewerList =  () => {
 
     // function for fetching all tweet viewers and reactors
     // calling getTweetViewers, getTweetUpReactors, and getTweetDownReactors functions from views.api.client.servce.js
-    const getData = async() => {
-      let inError = false;
+    // const getData = async() => {
+      
+    //   try {
+        
+    //     setLoading(true);
+    //     // call getTweetViewers function, if success is false then add error to error state, otherwise setTweetViewers state
+    //     const tweetViewers = await getTweetViewers(tweetIdForViewers);
+
+    //     if (!tweetViewers.success) {
+          
+    //       setError(prev => [...new Set([...prev, tweetViewers.error])]);
+          
+    //     }
+    //     setTweetViewers(tweetViewers);
+    //     setTweetViewersLen(tweetViewers.tweet_viewers.length);
+
+    //     // call getTweetUpReactors function, if success is false then add error to error state, otherwise setTweetUpReactors state
+    //     const tweetUpReactors = await getTweetUpReactors(tweetIdForViewers);
+
+    //     if (!tweetUpReactors.success) {
+          
+    //       setError(prev => [...new Set([...prev, tweetUpReactors.error])]);
+          
+    //     }
+    //     setTweetUpReactors(tweetUpReactors);
+    //     setTweetUpReactorsLen(tweetUpReactors.tweet_upreactors.length);
+
+    //     // call tweetDownReactors function, if success is false then add error to error state, otherwise setTweetDownReactors state
+    //     const tweetDownReactors = await getTweetDownReactors(tweetIdForViewers);
+
+    //     if (!tweetDownReactors.success) {
+          
+    //       setError(prev => [...new Set([...prev, tweetDownReactors.error])]);
+          
+    //     }
+    //     setTweetDownReactors(tweetDownReactors);
+    //     setTweetDownReactorsLen(tweetDownReactors.tweet_downreactors.length);
+
+    //   } catch (catchError) {
+        
+    //     setError(prev => [
+    //       ...new Set([...prev, catchError.message])]
+    //     );
+        
+    //   } finally{
+    //     setLoading(false);
+    //     console.log("Done executing getData function in ViewerList.jsx");
+    //   }
+      
+    // }
+
+        // function for fetching all tweet viewers and reactors
+    // calling getTweetStatsDetails functions from views.api.client.servce.js
+    const getDatav2 = async() => {
       try {
         
         setLoading(true);
         // call getTweetViewers function, if success is false then add error to error state, otherwise setTweetViewers state
-        const tweetViewers = await getTweetViewers(tweetIdForViewers);
+        const tweetStatsDetails = await getTweetStatsDetails(tweetIdForViewers);
 
-        if (!tweetViewers.success) {
+        if (!tweetStatsDetails.success) {
           
-          setError(prev => [...new Set([...prev, tweetViewers.error])]);
-          
-        }
-        setTweetViewers(tweetViewers);
-        setTweetViewersLen(tweetViewers.tweet_viewers.length);
-
-        // call getTweetUpReactors function, if success is false then add error to error state, otherwise setTweetUpReactors state
-        const tweetUpReactors = await getTweetUpReactors(tweetIdForViewers);
-
-        if (!tweetUpReactors.success) {
-          
-          setError(prev => [...new Set([...prev, tweetUpReactors.error])]);
+          setError(prev => [...new Set([...prev, tweetStatsDetails.error])]);
           
         }
-        setTweetUpReactors(tweetUpReactors);
-        setTweetUpReactorsLen(tweetUpReactors.tweet_upreactors.length);
 
-        // call tweetDownReactors function, if success is false then add error to error state, otherwise setTweetDownReactors state
-        const tweetDownReactors = await getTweetDownReactors(tweetIdForViewers);
+        // set tweet viewers state
+        setTweetViewers(tweetStatsDetails.tweet_viewers);
+        setTweetViewersLen(tweetStatsDetails.tweet_viewers.length);
+        
+        // set upreactors state
+        setTweetUpReactors(tweetStatsDetails.tweet_upreactors);
+        setTweetUpReactorsLen(tweetStatsDetails.tweet_upreactors.length);
 
-        if (!tweetDownReactors.success) {
-          
-          setError(prev => [...new Set([...prev, tweetDownReactors.error])]);
-          
-        }
-        setTweetDownReactors(tweetDownReactors);
-        setTweetDownReactorsLen(tweetDownReactors.tweet_downreactors.length);
+        // set down reactors state
+        setTweetDownReactors(tweetStatsDetails.tweet_downreactors);
+        setTweetDownReactorsLen(tweetStatsDetails.tweet_downreactors.length);
 
+        
       } catch (catchError) {
         
         setError(prev => [
@@ -91,11 +132,11 @@ const ViewerList =  () => {
         setLoading(false);
         console.log("Done executing getData function in ViewerList.jsx");
       }
-      
     }
-    getData();
+    getDatav2();
     
   }, [tweetIdForViewers, status, router]);
+
 
   const handleActiveNav = (nav) => {
     setActiveNav(nav);
@@ -138,7 +179,7 @@ const ViewerList =  () => {
             <section className={` w-full mt-2 h-100 overflow-y-auto ${activeNav === 'upvote' ? 'block' : 'hidden'}`}>
               {
                 tweetUpReactorsLen !== 0 ?
-                tweetUpReactors.tweet_upreactors.map((upreactor) => (
+                tweetUpReactors.map((upreactor) => (
                   <UserCard key={upreactor._id} user={upreactor}/>
                   
                 )) :
@@ -152,7 +193,7 @@ const ViewerList =  () => {
             <section className={` w-full mt-2 h-100 overflow-y-auto  ${activeNav === 'downvote' ? 'block' : 'hidden'}`}>
               {
                 tweetDownReactorsLen !== 0 ?
-                tweetDownReactors.tweet_downreactors.map((downreactor) => (
+                tweetDownReactors.map((downreactor) => (
                   <UserCard key={downreactor._id} user={downreactor}/>
                 )) :
                 <div className='flex flex-col justify-center items-center h-full'>
@@ -165,7 +206,7 @@ const ViewerList =  () => {
             <section className={` w-full mt-2 h-100 overflow-y-auto  ${activeNav === 'view' ? 'block' : 'hidden'}`}>
               {
                 tweetViewersLen !== 0 ?
-                tweetViewers.tweet_viewers.map((viewer) => (
+                tweetViewers.map((viewer) => (
                   <UserCard key={viewer._id} user={viewer}/>
                 )) :
                 <div className='flex flex-col justify-center items-center h-full'>

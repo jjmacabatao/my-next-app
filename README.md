@@ -1,36 +1,167 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-## Getting Started
+---
 
-First, run the development server:
+# Twitter clone application
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+A web application built with Next JS and MongoDB. This application serves as the final project in FullStack Bootcamp at ReDI.
+
+---
+
+## Features
+
+- User authentication
+- Creating, updating(limited to 5 times), deleting tweets.
+- Commenting on and deleting comments from tweets.
+- Recording user reactions, such as upvote, downvote, and views.
+- Notifications
+- User profiles
+
+---
+
+## Project Structure
+
+```
+app/
+│
+├── (web)/
+│   ├── (protected_route)/
+│   │   ├── notification/
+│   │   |   └── page.jsx
+│   │   |
+│   │   ├── tweets/
+|   |   |   ├── [slug]/
+|   |   |   |   ├── loading.jsx
+|   |   |   |   └── page.jsx
+│   │   |   |
+|   |   |   ├── loading.jsx
+|   |   |   └── page.jsx
+|   |   |
+│   │   └── user-profile/
+│   │       └── page.jsx
+|   |
+│   └── auth/
+│       └── page.jsx
+|
+├── api/
+│   ├── auth/
+│   ├── ├──[...nextauth]/ (for NextAuth impelemtation)
+│   │   |   └──route.js
+|   |   |
+│   ├── ├──register/
+│   │      └── route.js
+|   |
+│   ├── tweets/
+|   |   ├── [slug]/
+|   |   |   └── route.js
+|   |   |
+|   |   ├── comment/
+|   |   |   └── route.js
+|   |   |
+|   |   ├── notification/
+|   |   |   └── route.js
+|   |   |
+|   |   ├── reaction/
+|   |   |   └── route.js
+|   |   |
+|   |   └── route.js
+|   |
+│   └── user/
+|       └── route.js
+|
+├── error.js
+├── favicon.ico
+├── globals.css
+├── layout.js
+├── LayoutWrapper.js
+├── loading.js
+├── page.js
+|
+features/
+│   ├── auth/
+│   │   ├── components/
+│   │   └── contexts/
+|   |
+│   ├── comments/
+│   │   ├── components/
+│   │   └── services/
+|   |
+│   ├── notification/
+│   │   ├── components/
+│   │   ├── contexts/
+│   │   └── services/
+|   |
+│   ├── tweets/
+│   │   ├── components/
+│   │   ├── contexts/
+│   │   └── services/
+|   |
+│   ├── user-profile/
+│   │   └── components/
+|   |
+│   └──  views/
+│       ├── components/
+│       └── services/
+|
+lib/
+│   ├── models/ (Mongoose models)
+|   ├── alert.js
+|   ├── mongoose.js (for mongoDB connection)
+|   └── utils.js
+|
+public/
+|
+shared/
+│   ├── components/
+│   ├── context/
+│   ├── providers/
+│   └── styles/
+auth.js (for NextAuth impelemtation)
+proxy.js (for NextAuth impelemtation)
+
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Tech Stack
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+- NextJS
+- JavaScript (ES6+)
+- Tailwind CSS
+- MongoDB
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## Installation
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+git clone https://github.com/jjmacabatao/my-next-app.git
+cd my-next-app
+npm install
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Create your local environment variable (env.local)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+#### The app expects the following public environment variable:
 
-## Deploy on Vercel
+- `AUTH_TRUST_HOST`=true
+- `AUTH_SECRET`=your-long-random-secret-key-here
+- `AUTH_URL`=<your localhost url here: e.g. http://localhost:3000>
+- `MONGODB_URI`=your-mongoDB-connection-string-here
+- `NEXT_PUBLIC_API_BASE_URL`=your-localhost-url-here/api/tweets
+- `NEXT_PUBLIC_API_USER_BASE_URL`=your-localhost-url-here/api/user
+- `NEXT_PUBLIC_API_AUTH_BASE_URL`=your-localhost-url-here/api/auth
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Available Scripts
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `npm run dev` starts the local development server.
+- `npm run build` creates a production build.
+- `npm run start` serves the production build.
+- `npm run lint` runs ESLint.
+
+---
+
+## 👨‍💻 Author
+
+### Joseph Jake Macabatao
+
+- Github: https://github.com/jjmacabatao
+- LinkedIn: https://www.linkedin.com/in/joseph-jake-macabatao/
