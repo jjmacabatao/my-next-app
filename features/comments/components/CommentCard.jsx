@@ -50,7 +50,7 @@ const CommentCard = ( {comment, onDelete, withDeleleFn = true} ) => {
                     
                 </section>
                 {
-                    (session.user?.name?.id === comment.comment_by._id && withDeleleFn) && <Trash2 size={13} className="text-gray-500 cursor-pointer transition-all hover:fill-black" onClick={onDelete}/>
+                    (session?.user?.name?.id === comment.comment_by._id && withDeleleFn) && <Trash2 size={13} className="text-gray-500 cursor-pointer transition-all hover:fill-black" onClick={onDelete}/>
                 }
                 
             </div>

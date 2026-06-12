@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
  export const NotificationProvider = ( {children} ) => {
     const router = useRouter();
     const [notifications, setNotifications] = useState([]);
+    const [hasOpenedNotification, setHasOpenedNotification] = useState(false);
     const {data: session, status} = useSession();
 
     useEffect(() => {
@@ -22,7 +23,7 @@ import { useRouter } from "next/navigation";
         }
         
         //if authenticated and session is fully loaded.
-        const userId = session.user?.name?.id || '';
+        const userId = session?.user?.name?.id || '';
         // fetch all user's unopened notifications
         const getNotification = async () => {
             try {
@@ -33,19 +34,21 @@ import { useRouter } from "next/navigation";
                     console.error("Failed to load user's notifications. ", notification.error);
                 }else{
                     setNotifications(notification.notification);
+                    setHasOpenedNotification(false);
                 }
             } catch (error) {
                 console.error("Failed to load user's notifications. ",error);
             }
         }
+
         getNotification();
 
-       
-    },[status,router, session]);
+    },[status, session, hasOpenedNotification]);
 
     const value = {
         notifications,
-        setNotifications
+        setNotifications,
+        setHasOpenedNotification,
     }
 
     return (

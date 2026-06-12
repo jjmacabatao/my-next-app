@@ -53,7 +53,7 @@ const TweetForm = () => {
         try {
             setLoading(true);
             // call the createTweet function from the tweets.api.client.js which calls the api for creating tweet.
-            const response = await createTweet(tweet, session.user?.name?.id);
+            const response = await createTweet(tweet, session?.user?.name?.id);
 
             if (!response.success) {
                 // setError(response.error);

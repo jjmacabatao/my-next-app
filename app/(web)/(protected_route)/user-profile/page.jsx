@@ -12,7 +12,7 @@ const Profile = async ({searchParams}) => {
   }
 
   const { userId } = await searchParams;
-  const currentUser = session.user?.name?.id;
+  const currentUser = session?.user?.name?.id;
   const profileUserId = userId || currentUser;
   
   const getUserTweetAndComments = async () => {

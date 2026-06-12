@@ -65,11 +65,11 @@ const UserProfile = ({userData, currentUser}) => {
         <section className="mt-4 border-b border-gray-200">
           <div className="flex">
             <button className={`flex-1 py-4 text-sm ${activeTab === 'tweets' ? 'font-semibold border-b-2 border-blue-500' : ' text-gray-500 hover:bg-gray-50'} transition`} onClick={() => setActiveTab("tweets")}>
-              Tweets
+              Tweets ({userData.tweets.length})
             </button>
 
             <button  className={`flex-1 py-4 text-sm ${activeTab === 'comments' ? 'font-semibold border-b-2 border-blue-500' : ' text-gray-500 hover:bg-gray-50'} transition`} onClick={() => setActiveTab("comments")}>
-              Comments
+              Comments ({userData.comments.length})
             </button>
           </div>
         </section>

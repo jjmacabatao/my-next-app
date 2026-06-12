@@ -19,6 +19,29 @@ A web application built with Next JS and MongoDB. This application serves as the
 
 ---
 
+## App Routes
+
+    ○ =  prerendered as static content
+    ƒ =  server-rendered on demand
+
+    ┌ ƒ /
+    ├ ○ /_not-found
+    ├ ƒ /api/auth/[...nextauth]
+    ├ ƒ /api/auth/register
+    ├ ƒ /api/tweets
+    ├ ƒ /api/tweets/[slug]
+    ├ ƒ /api/tweets/comment
+    ├ ƒ /api/tweets/notification
+    ├ ƒ /api/tweets/reaction
+    ├ ƒ /api/user
+    ├ ƒ /auth
+    ├ ƒ /notification
+    ├ ƒ /tweets
+    ├ ƒ /tweets/[slug]
+    └ ƒ /user-profile
+
+---
+
 ## Project Structure
 
 ```
@@ -125,6 +148,7 @@ proxy.js (for NextAuth implementation)
 
 - NextJS
 - JavaScript (ES6+)
+- NodeJS
 - Tailwind CSS
 - MongoDB
 

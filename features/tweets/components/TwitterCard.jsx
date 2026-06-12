@@ -41,7 +41,7 @@ const TwitterCard = ({ tweet, isSingleView = false }) => {
         return;
     }
 
-  const userId =  session.user?.name?.id || '';
+  const userId =  session?.user?.name?.id || '';
 
   // handles the deletion of tweet
   const handleDelete = async (id) => {

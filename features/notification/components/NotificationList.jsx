@@ -8,8 +8,9 @@ import { Bell } from 'lucide-react';
 import Link from 'next/link';
 
 
+
 const NotificationList = () => {
-  const {notifications} = useNotification();
+  const {notifications, setHasOpenedNotification} = useNotification();
   
   return (
     <>
@@ -38,7 +39,7 @@ const NotificationList = () => {
               {
                   const notifUrl = !notification?.tweet ? 'notFound' : `${notification?.tweet?._id}?notifId=${notification._id}`;
                   return (
-                    <Link key={notification._id} href={`/tweets/${notifUrl}`}>
+                    <Link key={notification._id} href={`/tweets/${notifUrl}`} onClick={()=>setHasOpenedNotification(true)}>
                         <NotificationCard  notification={notification} message={notification.message} />
                     </Link>
                   )

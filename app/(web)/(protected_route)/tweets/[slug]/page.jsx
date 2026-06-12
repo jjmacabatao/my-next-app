@@ -20,7 +20,7 @@ const SingleTwitterPage = async ( {params,searchParams} ) => {
 
   const { slug } = await params;
   const { notifId } = await searchParams;
-  const userId = session.user?.name?.id;
+  const userId = session?.user?.name?.id;
 
   // update tweet view and return updated tweet
   // update view only if user does not already in the viewers.

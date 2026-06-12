@@ -27,7 +27,7 @@ const TweetComments = ( { tweetId, comments, tweetAuthor } ) => {
         e.preventDefault();
         try {
             setLoading(true);
-            const userId = session.user?.name?.id;
+            const userId = session?.user?.name?.id;
             const response = await createComment(tweetId,userId, comment);
 
             if (!response.success){
@@ -67,7 +67,7 @@ const TweetComments = ( { tweetId, comments, tweetAuthor } ) => {
                 return;
             }
             
-            const userId = session.user?.name?.id;
+            const userId = session?.user?.name?.id;
             // create notification
             if(userId !== tweetAuthor) {
                 await createNotification(tweetId,userId,tweetAuthor,`deleted a comment on your post.`);
