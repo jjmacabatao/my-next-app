@@ -14,7 +14,7 @@ const NotificationList = () => {
   
   return (
     <>
-      <div className={`${card.base} ${card.padding} m-auto w-full`}>
+      <div className={`${card.base} ${card.padding} m-auto w-full mb-12`}>
           <div className="bg-white/90 backdrop-blur border-b border-gray-200 mb-4">
                 <button className="flex py-2 text-sm  font-medium border-b-2 border-blue-500 text-black">
                     Unopened Notifications ({notifications.length})

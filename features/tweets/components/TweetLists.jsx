@@ -19,7 +19,7 @@ const TweetLists = async () => {
     }
 
     return (
-        <section className={`${layout.stack} w-full`}>
+        <section className={`${layout.stack} w-full mb-15 mt-1 pt-2`}>
             {tweets.data.length !== 0 ?
                 tweets.data.map((tweet) => (
                     <TwitterCard tweet={tweet} key={tweet._id}/>

@@ -16,10 +16,8 @@ const TweetForm = () => {
     const [tweet, setTweet] = useState("");
     const [isLimitReached, setIsLimitReached] = useState(false);
     const [loading, setLoading] = useState(false);
-    // const [error, setError] = useState("");
-
     const {data: session, status} = useSession();
-            
+    
     useEffect(()=>{
 
         // return if session is not yet loaded
@@ -81,8 +79,8 @@ const TweetForm = () => {
         }
     }
   return (
-    <>
-        <section className={`${card.base} ${card.padding} ${border.strong} mb-6 mx-auto w-full`}>
+    <div className=' sticky top-16 z-50 bg-white/50 backdrop-blur border-b border-b-gray-200'>
+        <section className={` ${card.base} ${card.padding} ${border.strong} mb-4 mx-auto w-full`}>
             <form className='flex flex-col space-y-4 w-full' onSubmit={handleCreateTweet}>
                 <section className='flex flex-row w-full gap-2'>
                     <Avatar avatarSrc={'/profile.png'} avatarAlt={'Profile Picture'} avatarWidth={60} avatarHeight={60} />
@@ -101,7 +99,7 @@ const TweetForm = () => {
                 </section>
             </form>
         </section>
-    </>
+    </div>
   )
 }
 
